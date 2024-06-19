@@ -33,7 +33,7 @@ def exibir_extrato(saldo, /, *, extrato):
 
 def criar_usuario(usuarios):
     cpf = input("Informe o CPF a ser cadastrado (Somente números): ")
-    verificação = any(usuario['cpf'] == cpf for usuario in usuarios)
+    verificação = any(usuario['CPF'] == cpf for usuario in usuarios)
     
     if verificação:
         print('*'*40,'CPF já cadastrado','*'*40)
@@ -51,16 +51,30 @@ def criar_usuario(usuarios):
               f'\t\tData de nascimento: {usuarios[-1]["Data de nascimento"]} \n',
               f'\t\tEndereço: {usuarios[-1]["Endereço"]} \n')
         
+def criar_conta(agencia, n_conta, usuarios):
+    cpf = input("Informe o CPF a ser cadastrado (Somente números): ")
+    verificação = any(usuario['CPF'] == cpf for usuario in usuarios)
+    
+    if verificação:
+        usuario = [user for user in usuarios if user['CPF'] == cpf]
+        print('*'*20,'Conta criada!','*'*20)
+        return {"Agencia": agencia, "N_conta": n_conta, "Usuario": usuario}
+    
+    print('*'*20,"Nenhum usuário encontrado!",'*'*20)
+    return None
+        
 
 menu = ('\n\n' + "*"*20 + "Bem vindo ao Bancão " + "*"*20 +"\n\n\n"
         "\t\t'1' - Depósito \n"
         "\t\t'2' - Saque\n"
         "\t\t'3' - Extrato\n"
         "\t\t'4' - Criar Usuário\n"
+        "\t\t'5' - Criar conta\n"
+        "\t\t'6' - Listar contas\n"
         "\t\t'0' - Sair\n" )
 saldo, saques_feitos, valor_ja_sacado = 0, 0, 0
 extrato = ""
-lista_usuarios = []
+lista_usuarios, lista_contas = [], []
 while True:
     opcao = int(input(menu))
     if opcao == 1:
@@ -77,6 +91,17 @@ while True:
         exibir_extrato(saldo, extrato = extrato)
     elif opcao == 4:
         criar_usuario(lista_usuarios)
+    elif opcao == 5:
+        agencia = input("Informe a agência: ")
+        conta = len(lista_contas) + 1
+        nova_conta = criar_conta(agencia, conta, lista_usuarios)
+        if nova_conta:
+            lista_contas.append(nova_conta)
+    elif opcao == 6:
+        for conta in lista_contas:
+            print(f"Agencia: {conta['Agencia']} \n",
+                  f"Nº da conta: {conta['N_conta']} \n",
+                  f"Titular :{conta['Usuario'][0]['nome']} \n \n")
     elif opcao == 0:
         break
     else:
